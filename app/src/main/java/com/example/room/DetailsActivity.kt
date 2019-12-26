@@ -13,14 +13,14 @@ class DetailsActivity : AppCompatActivity() {
         getIncomingIntent()
     }
 
-    fun getIncomingIntent() {
+    private fun getIncomingIntent() {
         if (intent.hasExtra("description")) {
             val intentDescription: String = intent.getStringExtra("description")
             setDescription(intentDescription)
         }
     }
 
-    fun setDescription(description: String) {
+    private fun setDescription(description: String) {
         val descriptionTextView = findViewById<TextView>(R.id.tv_animal_description)
         descriptionTextView.setText(description)
     }

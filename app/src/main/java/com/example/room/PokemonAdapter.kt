@@ -32,7 +32,7 @@ class PokemonAdapter(private val items: ArrayList<PokemonModel>, private val con
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.tvAnimal.text = items[position].name
-        holder.tvAnimal.setOnClickListener{
+        holder.tvAnimal.setOnClickListener {
             val intent = Intent(context, DetailsActivity::class.java)
             intent.putExtra("description", items[position].name)
             context.startActivity(intent)
