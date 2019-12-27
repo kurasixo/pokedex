@@ -1,12 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="1dp"
+    android:paddingRight="1dp"
+    android:paddingBottom="5dp">
 
     <TextView
-        android:id="@+id/tv_animal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:id="@+id/pokemonName"
+        android:layout_width="153dp"
+        android:layout_height="38dp"
+        android:layout_marginTop="28dp"
         android:paddingBottom="10dp"
-        android:textSize="16sp" />
-</LinearLayout>
+        android:textAlignment="center"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/pokemonSpritePreview"
+        android:layout_width="234dp"
+        android:layout_height="94dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+    <RatingBar
+        android:id="@+id/pokemonRatingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="57dp"
+        android:numStars="5"
+        android:stepSize="0.1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pokemonSpritePreview" />
+</androidx.constraintlayout.widget.ConstraintLayout>

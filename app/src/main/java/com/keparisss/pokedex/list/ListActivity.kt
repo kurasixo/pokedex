@@ -1,4 +1,4 @@
-package com.example.room
+package com.keparisss.pokedex.list
 
 import android.content.Context
 import okhttp3.*
@@ -8,9 +8,13 @@ import kotlinx.coroutines.*
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.keparisss.pokedex.models.PokeAPIResponse
+import com.keparisss.pokedex.models.PokemonModel
+import com.keparisss.pokedex.R
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.list_activity.*
 import java.io.IOException
@@ -28,19 +32,20 @@ class ListActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.list_activity)
 
         restoreData()
 
-        rv_pokemon_list.layoutManager = LinearLayoutManager(this)
-        rv_pokemon_list.adapter = PokemonAdapter(pokemons, this)
+        pokemonList.layoutManager = LinearLayoutManager(this)
+        pokemonList.adapter = ListActivityAdapter(pokemons, this)
+
+        hideLoader()
 
         if (pokemons.size == 0) {
             GlobalScope.launch { fetchPokemons(pokemonApiUrl) }
         }
 
-        rv_pokemon_list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        pokemonList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
 
@@ -96,10 +101,10 @@ class ListActivity : AppCompatActivity() {
             .url(url!!)
             .build()
 
-        isLoading = true
+        showLoader()
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                isLoading = false
+                hideLoader()
                 e.printStackTrace()
             }
 
@@ -113,27 +118,25 @@ class ListActivity : AppCompatActivity() {
                         response.body!!.charStream(),
                         PokeAPIResponse::class.java)
 
-                    isLoading = false
+                    hideLoader()
                     current = next
                     next = resp.next!!
 
-                    resp.results.forEach {
-                        fetchPokemon(it.url)
-                    }
+                    resp.results.forEach { fetchPokemon(it.url) }
                 }
             }
         })
     }
 
     private fun fetchPokemon(url: String) {
-        isLoading = true
+        showLoader()
         val request = Request.Builder()
             .url(url)
             .build()
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                isLoading = false
+                hideLoader()
                 e.printStackTrace()
             }
 
@@ -147,14 +150,28 @@ class ListActivity : AppCompatActivity() {
                         response.body!!.charStream(),
                         PokemonModel::class.java)
 
-                    isLoading = false
+                    hideLoader()
                     pokemons.add(resp)
 
-                    rv_pokemon_list.post {
-                        rv_pokemon_list.adapter!!.notifyDataSetChanged()
+                    pokemonList.post {
+                        pokemonList.adapter!!.notifyDataSetChanged()
                     }
                 }
             }
         })
+    }
+
+    private fun showLoader() {
+        isLoading = true
+        pokemonListProgressBar.post {
+            pokemonListProgressBar.visibility = View.VISIBLE
+        }
+    }
+
+    private fun hideLoader() {
+        isLoading = false
+        pokemonListProgressBar.post {
+            pokemonListProgressBar.visibility = View.GONE
+        }
     }
 }

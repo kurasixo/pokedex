@@ -1,4 +1,4 @@
-package com.example.room
+package com.keparisss.pokedex.models
 
 // Utilities
 interface ResourceSummary {
@@ -26,8 +26,15 @@ data class PokemonModel(
     val moves: List<PokemonMove>,
     val stats: List<PokemonStat>,
     val types: List<PokemonType>,
-    val sprites: PokemonSprites
-)
+    val sprites: PokemonSprites,
+    var rating: Float
+) {
+    fun getAbilities(): String {
+        return abilities.joinToString(", ", "abilities: ") {
+            it.ability.name
+        }
+    }
+}
 
 data class PokemonViewModel(
     val name: String,
@@ -35,14 +42,7 @@ data class PokemonViewModel(
 )
 
 data class PokemonSprites(
-    val backDefault: String?,
-    val backShiny: String?,
-    val frontDefault: String?,
-    val frontShiny: String?,
-    val backFemale: String?,
-    val backShinyFemale: String?,
-    val frontFemale: String?,
-    val frontShinyFemale: String?
+    val front_default: String?
 )
 
 data class PokemonAbility(
