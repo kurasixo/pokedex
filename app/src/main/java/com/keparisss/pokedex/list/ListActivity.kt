@@ -1,177 +1,64 @@
 package com.keparisss.pokedex.list
 
 import android.content.Context
-import okhttp3.*
-import com.google.gson.GsonBuilder
-
-import kotlinx.coroutines.*
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.keparisss.pokedex.models.PokeAPIResponse
-import com.keparisss.pokedex.models.PokemonModel
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.keparisss.pokedex.models.ListPokemonViewModel
+
 import com.keparisss.pokedex.R
-import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.list_activity.*
-import java.io.IOException
+import kotlinx.coroutines.GlobalScope
+//import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 class ListActivity : AppCompatActivity() {
-    private var isLoading: Boolean = false
+    private var pokemonViewModel: ListPokemonViewModel? = null
     private val pokemonApiUrl: String = "https://pokeapi.co/api/v2/pokemon"
-
-    private val client = OkHttpClient()
-    private val gson = GsonBuilder().create()
-
-    private var next: String? = null
-    private var current: String? = null
-    private var pokemons: ArrayList<PokemonModel> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.list_activity)
 
-        restoreData()
-
+        pokemonViewModel = ViewModelProviders.of(this)[ListPokemonViewModel::class.java]
         pokemonList.layoutManager = LinearLayoutManager(this)
-        pokemonList.adapter = ListActivityAdapter(pokemons, this)
+        val pokemons = pokemonViewModel!!.getAllPokemons()
 
-        hideLoader()
+        GlobalScope.launch { pokemonViewModel!!.fetchPokemons(pokemonApiUrl) }
+        pokemonList.adapter = ListActivityAdapter(pokemons.value!!, this)
 
-        if (pokemons.size == 0) {
-            GlobalScope.launch { fetchPokemons(pokemonApiUrl) }
-        }
+        pokemons.observe(this, Observer {
+            pokemonList.adapter?.notifyDataSetChanged()
+        })
 
         pokemonList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
 
-                if (isLoading) {
-                    return
-                }
-
-                if (
-                    next != null &&
-                    next != current &&
-                    !recyclerView.canScrollVertically(1)
-                ) {
-                    GlobalScope.launch { fetchPokemons(next) }
-                }
-            }
-        })
-    }
-
-    override fun onPause() {
-        super.onPause()
-
-        val editor = getPreferences(Context.MODE_PRIVATE).edit()
-
-        editor.putString("next", next)
-        editor.putString("current", current)
-        editor.putString("pokemons", gson.toJson(pokemons))
-
-        editor.apply()
-    }
-
-    private fun restoreData() {
-        val preferences = getPreferences(Context.MODE_PRIVATE)
-
-        val preloadedNext = preferences.getString("next", null)
-        val preloadedCurrent = preferences.getString("current", null)
-        val preloadedPokemons = preferences.getString("pokemons", null)
-
-        if (preloadedNext != null) {
-            next = preloadedNext
-        }
-
-        if (preloadedCurrent != null) {
-            current = preloadedCurrent
-        }
-
-        if (preloadedPokemons != null) {
-            pokemons = gson.fromJson(preloadedPokemons, object : TypeToken<ArrayList<PokemonModel>>() {}.type)
-        }
-    }
-
-    private fun fetchPokemons(url: String?) {
-        val request = Request.Builder()
-            .url(url!!)
-            .build()
-
-        showLoader()
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                hideLoader()
-                e.printStackTrace()
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                response.use {
-                    if (!response.isSuccessful) {
-                        throw IOException("Unexpected code $response")
-                    }
-
-                    val resp = gson.fromJson(
-                        response.body!!.charStream(),
-                        PokeAPIResponse::class.java)
-
-                    hideLoader()
-                    current = next
-                    next = resp.next!!
-
-                    resp.results.forEach { fetchPokemon(it.url) }
-                }
-            }
-        })
-    }
-
-    private fun fetchPokemon(url: String) {
-        showLoader()
-        val request = Request.Builder()
-            .url(url)
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                hideLoader()
-                e.printStackTrace()
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                response.use {
-                    if (!response.isSuccessful) {
-                        throw IOException("Unexpected code $response")
-                    }
-
-                    val resp = gson.fromJson(
-                        response.body!!.charStream(),
-                        PokemonModel::class.java)
-
-                    hideLoader()
-                    pokemons.add(resp)
-
-                    pokemonList.post {
-                        pokemonList.adapter!!.notifyDataSetChanged()
+                if (!recyclerView.canScrollVertically(1)) {
+                    GlobalScope.launch {
+                        pokemonViewModel!!.onOverScroll()
                     }
                 }
             }
         })
     }
 
-    private fun showLoader() {
-        isLoading = true
-        pokemonListProgressBar.post {
-            pokemonListProgressBar.visibility = View.VISIBLE
-        }
-    }
-
-    private fun hideLoader() {
-        isLoading = false
-        pokemonListProgressBar.post {
-            pokemonListProgressBar.visibility = View.GONE
-        }
-    }
+//    override fun onPause() {
+//        super.onPause()
+//
+//        val editor = getPreferences(Context.MODE_PRIVATE).edit()
+//
+//        editor.putString("next", next)
+//        editor.putString("current", current)
+//        editor.putString("pokemons", gson.toJson(pokemonViewModel!!.getAllPokemons().value))
+//        editor.putString("pokemonsSize", pokemonViewModel!!.getAllPokemons().value!!.size.toString())
+//
+//        editor.apply()
+//    }
 }

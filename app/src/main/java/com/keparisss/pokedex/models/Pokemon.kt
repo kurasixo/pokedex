@@ -1,5 +1,19 @@
 package com.keparisss.pokedex.models
 
+import android.app.Application
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
+import com.google.gson.GsonBuilder
+
+import kotlinx.coroutines.*
+
+import okhttp3.*
+import java.io.IOException
+import android.content.Context
+import androidx.lifecycle.AndroidViewModel
+import com.google.gson.reflect.TypeToken
+
 // Utilities
 interface ResourceSummary {
     val id: Int
@@ -90,3 +104,119 @@ data class PokeAPIResponse(
     val results: ArrayList<PokemonViewModel>
 )
 
+class PokemonModelLiveData {
+    val mutableLiveData: MutableLiveData<ArrayList<PokemonModel>> =
+        MutableLiveData(ArrayList())
+}
+
+class ListPokemonViewModel: ViewModel() {
+
+    val pokemonModelLiveData: PokemonModelLiveData = PokemonModelLiveData()
+
+    private val client = OkHttpClient()
+    private val gson = GsonBuilder().create()
+
+    private var pokemonsSize = 0
+
+    private var isLoading: Boolean = false
+    private var next: String? = null
+    private var current: String? = null
+
+//    fun restoreData() {
+//        val preferences = getPreferences(Context.MODE_PRIVATE)
+//
+//        val preloadedNext = preferences.getString("next", null)
+//        val preloadedCurrent = preferences.getString("current", null)
+//        val preloadedPokemons = preferences.getString("pokemons", null)
+//
+//        next = preloadedNext
+//        current = preloadedCurrent
+//
+//        if (preloadedPokemons != null) {
+//            val pokemons = gson.fromJson<ArrayList<PokemonModel>>(
+//                preloadedPokemons,
+//                object : TypeToken<ArrayList<PokemonModel>>() {}.type)
+//
+//            pokemonModelLiveData.mutableLiveData.value = pokemons
+//        }
+//    }
+
+    fun fetchPokemons(url: String?) {
+        isLoading = true
+        val request = Request.Builder()
+            .url(url!!)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                response.use {
+                    if (!response.isSuccessful) {
+                        throw IOException("Unexpected code $response")
+                    }
+
+                    val resp = gson.fromJson(
+                        response.body!!.charStream(),
+                        PokeAPIResponse::class.java)
+
+                    current = next
+                    next = resp.next!!
+
+                    resp.results.forEachIndexed {pos, it ->
+                        fetchPokemon(it.url)
+
+                        if (pos == resp.results.size - 1) {
+                            isLoading = false
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    private fun fetchPokemon(url: String) {
+        val request = Request.Builder()
+            .url(url)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                response.use {
+                    if (!response.isSuccessful) {
+                        throw IOException("Unexpected code $response")
+                    }
+
+                    val resp = gson.fromJson(
+                        response.body!!.charStream(),
+                        PokemonModel::class.java)
+
+                    val prevPokemons = getAllPokemons().value!!
+                    prevPokemons.add(resp)
+
+                    pokemonModelLiveData.mutableLiveData.postValue(prevPokemons)
+                }
+            }
+        })
+    }
+
+    fun onOverScroll() {
+        if (isLoading) {
+            return
+        }
+
+        if (next != null && next != current) {
+            fetchPokemons(next)
+        }
+    }
+
+    fun getAllPokemons(): LiveData<ArrayList<PokemonModel>> {
+        return pokemonModelLiveData.mutableLiveData
+    }
+}

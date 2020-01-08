@@ -54,6 +54,7 @@ class ListActivityAdapter(private var items: ArrayList<PokemonModel>, private va
         holder.pokemonRatingBar.setOnRatingBarChangeListener { _, rating, fromUser ->
             if (fromUser) {
                 items[position].rating = rating
+                notifyItemChanged(position)
             }
         }
 

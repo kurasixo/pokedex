@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "android",
+      "request": "launch",
+      "name": "Launch App",
+      "appSrcRoot": "${workspaceRoot}/app/src/main",
+      "apkFile": "${workspaceRoot}/app/build/outputs/apk/app-debug.apk",
+      "adbPort": 5554,
+      "staleBuild": "warn",
+      "manifestFile": "${workspaceRoot}/app/src/main/AndroidManifest.xml",
+      "pmInstallArgs": ["-r"],
+      "launchActivity": ".ListActivity",
+      "preLaunchTask": "run gradle"
+    }
+  ]
+}

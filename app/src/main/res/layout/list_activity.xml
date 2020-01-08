@@ -14,14 +14,4 @@
         tools:layout_editor_absoluteY="109dp"
         tools:visibility="visible" />
 
-    <ProgressBar
-        android:id="@+id/pokemonListProgressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="132dp"
-        android:layout_height="133dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/pokemonList"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
