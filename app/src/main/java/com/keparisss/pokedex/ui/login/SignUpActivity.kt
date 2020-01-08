@@ -8,8 +8,8 @@ import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
-//import android.text.Editable
-//import android.text.TextWatcher
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
@@ -19,24 +19,23 @@ import android.widget.Toast
 
 import com.keparisss.pokedex.R
 
-class LoginActivity : AppCompatActivity() {
-
-    private lateinit var loginViewModel: LoginViewModel
+class SignUpActivity : AppCompatActivity() {
+    private lateinit var signupViewModel: SignUpViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.login_activity)
+        setContentView(R.layout.signup_activity)
 
-        val username = findViewById<EditText>(R.id.login_username)
-        val password = findViewById<EditText>(R.id.login_password)
-        val login = findViewById<Button>(R.id.login_button)
-        val loading = findViewById<ProgressBar>(R.id.login_loading)
+        val username = findViewById<EditText>(R.id.signup_username)
+        val password = findViewById<EditText>(R.id.signup_password)
+        val login = findViewById<Button>(R.id.signup_button)
+        val loading = findViewById<ProgressBar>(R.id.signup_loading)
 
-        loginViewModel = ViewModelProviders.of(this, LoginViewModelFactory())
-            .get(LoginViewModel::class.java)
+        signupViewModel = ViewModelProviders.of(this, LoginViewModelFactory())
+            .get(SignUpViewModel::class.java)
 
-        loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
+        signupViewModel.loginFormState.observe(this@SignUpActivity, Observer {
             val loginState = it ?: return@Observer
 
             // disable login button unless both username / password is valid
@@ -50,7 +49,7 @@ class LoginActivity : AppCompatActivity() {
             }
         })
 
-        loginViewModel.loginResult.observe(this@LoginActivity, Observer {
+        signupViewModel.signupResult.observe(this@SignUpActivity, Observer {
             val loginResult = it ?: return@Observer
 
             loading.visibility = View.GONE
@@ -62,11 +61,12 @@ class LoginActivity : AppCompatActivity() {
             }
             setResult(Activity.RESULT_OK)
 
+            //Complete and destroy login activity once successful
             finish()
         })
 
         username.afterTextChanged {
-            loginViewModel.loginDataChanged(
+            signupViewModel.loginDataChanged(
                 username.text.toString(),
                 password.text.toString()
             )
@@ -77,7 +77,7 @@ class LoginActivity : AppCompatActivity() {
                 getSharedPreferences("sensitiveData", Context.MODE_PRIVATE)
 
             afterTextChanged {
-                loginViewModel.loginDataChanged(
+                signupViewModel.loginDataChanged(
                     username.text.toString(),
                     password.text.toString()
                 )
@@ -86,7 +86,7 @@ class LoginActivity : AppCompatActivity() {
             setOnEditorActionListener { _, actionId, _ ->
                 when (actionId) {
                     EditorInfo.IME_ACTION_DONE ->
-                        loginViewModel.login(
+                        signupViewModel.signup(
                             username.text.toString(),
                             password.text.toString(),
                             preferences
@@ -97,7 +97,7 @@ class LoginActivity : AppCompatActivity() {
 
             login.setOnClickListener {
                 loading.visibility = View.VISIBLE
-                loginViewModel.login(
+                signupViewModel.signup(
                     username.text.toString(),
                     password.text.toString(),
                     preferences
@@ -120,4 +120,19 @@ class LoginActivity : AppCompatActivity() {
     private fun showLoginFailed(@StringRes errorString: Int) {
         Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
     }
+}
+
+/**
+ * Extension function to simplify setting an afterTextChanged action to EditText components.
+ */
+fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
+    this.addTextChangedListener(object : TextWatcher {
+        override fun afterTextChanged(editable: Editable?) {
+            afterTextChanged.invoke(editable.toString())
+        }
+
+        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+
+        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+    })
 }

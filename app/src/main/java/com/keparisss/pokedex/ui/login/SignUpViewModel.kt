@@ -10,36 +10,35 @@ import com.keparisss.pokedex.data.Result
 
 import com.keparisss.pokedex.R
 
-class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
+class SignUpViewModel(private val loginRepository: LoginRepository) : ViewModel() {
 
-    private val _loginForm = MutableLiveData<LoginFormState>()
-    val loginFormState: LiveData<LoginFormState> = _loginForm
+    private val _signupForm = MutableLiveData<LoginFormState>()
+    val loginFormState: LiveData<LoginFormState> = _signupForm
 
-    private val _loginResult = MutableLiveData<LoginResult>()
-    val loginResult: LiveData<LoginResult> = _loginResult
+    private val _signupResult = MutableLiveData<LoginResult>()
+    val signupResult: LiveData<LoginResult> = _signupResult
 
-    fun login(username: String, password: String, preferences: SharedPreferences) {
-        val result = loginRepository.login(username, password, preferences)
+    fun signup(username: String, password: String, preferences: SharedPreferences) {
+        val result = loginRepository.signup(username, password, preferences)
 
         if (result is Result.Success) {
-            _loginResult.value =
+            _signupResult.value =
                 LoginResult(success = LoggedInUserView(displayName = result.data.displayName))
         } else {
-            _loginResult.value = LoginResult(error = R.string.login_failed)
+            _signupResult.value = LoginResult(error = R.string.login_failed)
         }
     }
 
     fun loginDataChanged(username: String, password: String) {
         if (!isUserNameValid(username)) {
-            _loginForm.value = LoginFormState(usernameError = R.string.invalid_username)
+            _signupForm.value = LoginFormState(usernameError = R.string.invalid_username)
         } else if (!isPasswordValid(password)) {
-            _loginForm.value = LoginFormState(passwordError = R.string.invalid_password)
+            _signupForm.value = LoginFormState(passwordError = R.string.invalid_password)
         } else {
-            _loginForm.value = LoginFormState(isDataValid = true)
+            _signupForm.value = LoginFormState(isDataValid = true)
         }
     }
 
-    // A placeholder username validation check
     private fun isUserNameValid(username: String): Boolean {
         return if (username.contains('@')) {
             Patterns.EMAIL_ADDRESS.matcher(username).matches()
@@ -48,7 +47,6 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
         }
     }
 
-    // A placeholder password validation check
     private fun isPasswordValid(password: String): Boolean {
         return password.length > 5
     }

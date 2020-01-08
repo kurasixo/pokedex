@@ -12,15 +12,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".ui.login.SingUpActivity"
+            android:label="@string/title_activity_sing_up"></activity>
+        <activity
             android:name=".ui.login.LoginActivity"
-            android:label="@string/title_activity_login"></activity>
-        <activity android:name=".list.ListActivity">
+            android:label="@string/title_activity_login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".list.ListActivity" />
         <activity android:name=".details.DetailsActivity" />
     </application>
 

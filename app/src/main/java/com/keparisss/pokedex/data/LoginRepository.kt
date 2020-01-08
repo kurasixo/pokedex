@@ -1,5 +1,6 @@
 package com.keparisss.pokedex.data
 
+import android.content.SharedPreferences
 import com.keparisss.pokedex.data.model.LoggedInUser
 
 /**
@@ -27,9 +28,18 @@ class LoginRepository(val dataSource: LoginDataSource) {
         dataSource.logout()
     }
 
-    fun login(username: String, password: String): Result<LoggedInUser> {
-        // handle login
-        val result = dataSource.login(username, password)
+    fun login(username: String, password: String, preferences: SharedPreferences): Result<LoggedInUser> {
+        val result = dataSource.login(username, password, preferences)
+
+        if (result is Result.Success) {
+            setLoggedInUser(result.data)
+        }
+
+        return result
+    }
+
+    fun signup(username: String, password: String, preferences: SharedPreferences): Result<LoggedInUser> {
+        val result = dataSource.signup(username, password, preferences)
 
         if (result is Result.Success) {
             setLoggedInUser(result.data)
