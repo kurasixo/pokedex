@@ -2,13 +2,12 @@ package com.keparisss.pokedex.details
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.ImageView
-import android.widget.TextView
 
 import com.bumptech.glide.Glide
 import com.keparisss.pokedex.models.PokemonModel
 import com.keparisss.pokedex.R
 import com.google.gson.GsonBuilder
+import kotlinx.android.synthetic.main.details_activity.*
 
 
 class DetailsActivity : AppCompatActivity() {
@@ -19,6 +18,13 @@ class DetailsActivity : AppCompatActivity() {
         setContentView(R.layout.details_activity)
 
         getIncomingIntent()
+
+        ratingBar.setOnRatingBarChangeListener { _, rating, fromUser ->
+            if (fromUser) {
+//                items[position].rating = rating
+//                notifyItemChanged(position)
+            }
+        }
     }
 
     private fun getIncomingIntent() {
@@ -33,21 +39,17 @@ class DetailsActivity : AppCompatActivity() {
     }
 
     private fun setName(name: String?) {
-        val descriptionTextView = findViewById<TextView>(R.id.pokemonName)
-        descriptionTextView.text = name
+        pokemonName.text = name
     }
 
     private fun setDescription(description: String?) {
-        val descriptionTextView = findViewById<TextView>(R.id.pokemonDescription)
-        descriptionTextView.text = description
+        pokemonDescription.text = description
     }
 
     private fun setImage(spriteUrl: String?) {
-        val imageComponent = findViewById<ImageView>(R.id.pokemonSprite)
-
         Glide
             .with(this)
             .load(spriteUrl)
-            .into(imageComponent)
+            .into(pokemonSprite)
     }
 }

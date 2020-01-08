@@ -29,7 +29,9 @@ class ListActivityAdapter(private var items: ArrayList<PokemonModel>, private va
         val pokemonSprite: ImageView = view.pokemonSpritePreview
     }
 
-    override fun getItemCount(): Int = items.size
+    override fun getItemCount(): Int {
+        return items.size
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -50,13 +52,6 @@ class ListActivityAdapter(private var items: ArrayList<PokemonModel>, private va
             .error(R.drawable.ic_broken_image)
             .fallback(R.drawable.ic_broken_image)
             .into(holder.pokemonSprite)
-
-        holder.pokemonRatingBar.setOnRatingBarChangeListener { _, rating, fromUser ->
-            if (fromUser) {
-                items[position].rating = rating
-                notifyItemChanged(position)
-            }
-        }
 
         holder.pokemonName.setOnClickListener {
             val intent = Intent(context, DetailsActivity::class.java)

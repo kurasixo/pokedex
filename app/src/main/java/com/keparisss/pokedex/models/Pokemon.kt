@@ -1,17 +1,14 @@
 package com.keparisss.pokedex.models
 
 import android.app.Application
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.LiveData
 import com.google.gson.GsonBuilder
 
-import kotlinx.coroutines.*
-
 import okhttp3.*
 import java.io.IOException
 import android.content.Context
-import androidx.lifecycle.AndroidViewModel
 import com.google.gson.reflect.TypeToken
 
 // Utilities
@@ -104,12 +101,11 @@ data class PokeAPIResponse(
     val results: ArrayList<PokemonViewModel>
 )
 
-class PokemonModelLiveData {
-    val mutableLiveData: MutableLiveData<ArrayList<PokemonModel>> =
-        MutableLiveData(ArrayList())
-}
-
-class ListPokemonViewModel: ViewModel() {
+class ListPokemonViewModel(app: Application): AndroidViewModel(app) {
+    class PokemonModelLiveData {
+        val mutableLiveData: MutableLiveData<ArrayList<PokemonModel>> =
+            MutableLiveData(ArrayList())
+    }
 
     val pokemonModelLiveData: PokemonModelLiveData = PokemonModelLiveData()
 
@@ -117,31 +113,51 @@ class ListPokemonViewModel: ViewModel() {
     private val gson = GsonBuilder().create()
 
     private var pokemonsSize = 0
+    private val pokemonApiUrl: String = "https://pokeapi.co/api/v2/pokemon"
 
-    private var isLoading: Boolean = false
     private var next: String? = null
     private var current: String? = null
+    private var isLoading: Boolean = false
 
-//    fun restoreData() {
-//        val preferences = getPreferences(Context.MODE_PRIVATE)
-//
-//        val preloadedNext = preferences.getString("next", null)
-//        val preloadedCurrent = preferences.getString("current", null)
-//        val preloadedPokemons = preferences.getString("pokemons", null)
-//
-//        next = preloadedNext
-//        current = preloadedCurrent
-//
-//        if (preloadedPokemons != null) {
-//            val pokemons = gson.fromJson<ArrayList<PokemonModel>>(
-//                preloadedPokemons,
-//                object : TypeToken<ArrayList<PokemonModel>>() {}.type)
-//
-//            pokemonModelLiveData.mutableLiveData.value = pokemons
-//        }
-//    }
+    fun initPokemons() {
+        val preferences = getApplication<Application>().
+            getSharedPreferences("pokemonsDetails", Context.MODE_PRIVATE)
+        pokemonsSize = preferences.getString("pokemonsSize", "0")!!.toInt()
 
-    fun fetchPokemons(url: String?) {
+        if (pokemonsSize != 0) {
+            restoreData()
+        } else {
+            fetchPokemons(pokemonApiUrl)
+        }
+    }
+
+    private fun restoreData() {
+        val preferences = getApplication<Application>().
+            getSharedPreferences("pokemonsDetails", Context.MODE_PRIVATE)
+
+        val preloadedNext = preferences.getString("next", null)
+        val preloadedCurrent = preferences.getString("current", null)
+        val preloadedPokemons = preferences.getString("pokemons", null)
+
+        next = preloadedNext
+        current = preloadedCurrent
+
+        if (preloadedPokemons != null) {
+            val pokemons = gson.fromJson<ArrayList<PokemonModel>>(
+                preloadedPokemons,
+                object : TypeToken<ArrayList<PokemonModel>>() {}.type)
+
+            val prevPokemons = getAllPokemons().value!!
+
+            pokemons.forEach {
+                prevPokemons.add(it)
+            }
+
+            pokemonModelLiveData.mutableLiveData.postValue(prevPokemons)
+        }
+    }
+
+    private fun fetchPokemons(url: String?) {
         isLoading = true
         val request = Request.Builder()
             .url(url!!)
@@ -165,8 +181,8 @@ class ListPokemonViewModel: ViewModel() {
                     current = next
                     next = resp.next!!
 
-                    resp.results.forEachIndexed {pos, it ->
-                        fetchPokemon(it.url)
+                    resp.results.forEachIndexed {pos, pokemon ->
+                        fetchPokemon(pokemon.url)
 
                         if (pos == resp.results.size - 1) {
                             isLoading = false
@@ -218,5 +234,19 @@ class ListPokemonViewModel: ViewModel() {
 
     fun getAllPokemons(): LiveData<ArrayList<PokemonModel>> {
         return pokemonModelLiveData.mutableLiveData
+    }
+
+    fun saveToPreferences() {
+        val editor = getApplication<Application>().
+            getSharedPreferences("pokemonsDetails", Context.MODE_PRIVATE).edit()
+
+        val pokemons = getAllPokemons().value
+
+        editor.putString("next", next)
+        editor.putString("current", current)
+        editor.putString("pokemons", gson.toJson(pokemons))
+        editor.putString("pokemonsSize", pokemons!!.size.toString())
+
+        editor.apply()
     }
 }
