@@ -3,6 +3,8 @@ package com.keparisss.pokedex.details
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 
+import javax.inject.Inject
+
 import com.bumptech.glide.Glide
 import com.keparisss.pokedex.models.PokemonModel
 import com.keparisss.pokedex.R
@@ -13,6 +15,9 @@ import kotlinx.android.synthetic.main.details_activity.*
 class DetailsActivity : AppCompatActivity() {
     private val gson = GsonBuilder().create()
 
+    @Inject
+    lateinit var pokemon: PokemonModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.details_activity)
@@ -21,8 +26,7 @@ class DetailsActivity : AppCompatActivity() {
 
         ratingBar.setOnRatingBarChangeListener { _, rating, fromUser ->
             if (fromUser) {
-//                items[position].rating = rating
-//                notifyItemChanged(position)
+                pokemon.rating = rating
             }
         }
     }

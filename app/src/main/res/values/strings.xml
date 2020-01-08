@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name">Room</string>
+    <string name="app_name">Pokedex</string>
+
     <string name="title_activity_login">Sign in</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
@@ -9,4 +10,12 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
+
+    <plurals name="pokemons">
+        <item quantity="zero">Zero Pokemons</item>
+        <item quantity="one">%d Pokemon</item>
+        <item quantity="few">Few Pokemons: %d</item>
+        <item quantity="many">Many Pokemons: %d</item>
+        <item quantity="other">You have caught them all: You got %d Pokemons</item>
+    </plurals>
 </resources>

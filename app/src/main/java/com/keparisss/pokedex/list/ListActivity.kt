@@ -2,7 +2,6 @@ package com.keparisss.pokedex.list
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 
@@ -30,8 +29,8 @@ class ListActivity : AppCompatActivity() {
         pokemonList.adapter = ListActivityAdapter(pokemons.value!!, this)
 
         pokemons.observe(this, Observer {
-//            Log.d("TEST", "[onChanged]: " + it)
             pokemonList.adapter?.notifyDataSetChanged()
+            pokemonCount.text = resources.getQuantityString(R.plurals.pokemons, it.size, it.size)
         })
 
         pokemonList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
