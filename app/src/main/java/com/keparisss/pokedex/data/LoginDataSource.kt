@@ -1,7 +1,7 @@
 package com.keparisss.pokedex.data
 
 import android.content.SharedPreferences
-import com.keparisss.pokedex.data.model.LoggedInUser
+import com.keparisss.pokedex.models.*
 import java.io.IOException
 
 class LoginDataSource {
@@ -44,10 +44,6 @@ class LoginDataSource {
         } catch (e: Throwable) {
             return Result.Error(IOException("Error signing up"))
         }
-    }
-
-    fun logout() {
-        // TODO: revoke authentication
     }
 }
 

@@ -1,12 +1,15 @@
-package com.keparisss.pokedex.ui.login
+package com.keparisss.pokedex.login
 
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import android.util.Patterns
+
 import com.keparisss.pokedex.data.LoginRepository
-import com.keparisss.pokedex.data.Result
+import com.keparisss.pokedex.models.Result
+
+import com.keparisss.pokedex.models.*
 
 import com.keparisss.pokedex.R
 
@@ -39,7 +42,6 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
         }
     }
 
-    // A placeholder username validation check
     private fun isUserNameValid(username: String): Boolean {
         return if (username.contains('@')) {
             Patterns.EMAIL_ADDRESS.matcher(username).matches()
@@ -48,7 +50,6 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
         }
     }
 
-    // A placeholder password validation check
     private fun isPasswordValid(password: String): Boolean {
         return password.length > 5
     }

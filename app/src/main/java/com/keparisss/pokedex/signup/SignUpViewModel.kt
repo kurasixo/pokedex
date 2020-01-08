@@ -1,4 +1,4 @@
-package com.keparisss.pokedex.ui.login
+package com.keparisss.pokedex.signup
 
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
@@ -6,9 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import android.util.Patterns
 import com.keparisss.pokedex.data.LoginRepository
-import com.keparisss.pokedex.data.Result
 
 import com.keparisss.pokedex.R
+import com.keparisss.pokedex.models.*
 
 class SignUpViewModel(private val loginRepository: LoginRepository) : ViewModel() {
 

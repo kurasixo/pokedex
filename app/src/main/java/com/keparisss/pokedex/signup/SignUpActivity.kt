@@ -1,7 +1,8 @@
-package com.keparisss.pokedex.ui.login
+package com.keparisss.pokedex.signup
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -17,7 +18,11 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
 
+import com.keparisss.pokedex.models.LoggedInUserView
+
 import com.keparisss.pokedex.R
+import com.keparisss.pokedex.list.ListActivity
+import com.keparisss.pokedex.login.LoginViewModelFactory
 
 class SignUpActivity : AppCompatActivity() {
     private lateinit var signupViewModel: SignUpViewModel
@@ -32,7 +37,9 @@ class SignUpActivity : AppCompatActivity() {
         val login = findViewById<Button>(R.id.signup_button)
         val loading = findViewById<ProgressBar>(R.id.signup_loading)
 
-        signupViewModel = ViewModelProviders.of(this, LoginViewModelFactory())
+        signupViewModel = ViewModelProviders.of(this,
+            LoginViewModelFactory()
+        )
             .get(SignUpViewModel::class.java)
 
         signupViewModel.loginFormState.observe(this@SignUpActivity, Observer {
@@ -50,19 +57,22 @@ class SignUpActivity : AppCompatActivity() {
         })
 
         signupViewModel.signupResult.observe(this@SignUpActivity, Observer {
-            val loginResult = it ?: return@Observer
+            val signupResult = it ?: return@Observer
 
             loading.visibility = View.GONE
-            if (loginResult.error != null) {
-                showLoginFailed(loginResult.error)
+            if (signupResult.error != null) {
+                showLoginFailed(signupResult.error)
             }
-            if (loginResult.success != null) {
-                updateUiWithUser(loginResult.success)
-            }
-            setResult(Activity.RESULT_OK)
 
-            //Complete and destroy login activity once successful
-            finish()
+            if (signupResult.success != null) {
+                val intent = Intent(this, ListActivity::class.java)
+                startActivity(intent)
+                updateUiWithUser(signupResult.success)
+
+                finish()
+            }
+
+            setResult(Activity.RESULT_OK)
         })
 
         username.afterTextChanged {

@@ -1,15 +1,14 @@
-package com.keparisss.pokedex.ui.login
+package com.keparisss.pokedex.login
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
-//import android.text.Editable
-//import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
@@ -17,7 +16,11 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
 
+import com.keparisss.pokedex.models.LoggedInUserView
+
 import com.keparisss.pokedex.R
+import com.keparisss.pokedex.list.ListActivity
+import com.keparisss.pokedex.signup.afterTextChanged
 
 class LoginActivity : AppCompatActivity() {
 
@@ -39,12 +42,12 @@ class LoginActivity : AppCompatActivity() {
         loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
             val loginState = it ?: return@Observer
 
-            // disable login button unless both username / password is valid
             login.isEnabled = loginState.isDataValid
 
             if (loginState.usernameError != null) {
                 username.error = getString(loginState.usernameError)
             }
+
             if (loginState.passwordError != null) {
                 password.error = getString(loginState.passwordError)
             }
@@ -57,12 +60,16 @@ class LoginActivity : AppCompatActivity() {
             if (loginResult.error != null) {
                 showLoginFailed(loginResult.error)
             }
-            if (loginResult.success != null) {
-                updateUiWithUser(loginResult.success)
-            }
-            setResult(Activity.RESULT_OK)
 
-            finish()
+            if (loginResult.success != null) {
+                val intent = Intent(this, ListActivity::class.java)
+                startActivity(intent)
+                updateUiWithUser(loginResult.success)
+
+                finish()
+            }
+
+            setResult(Activity.RESULT_OK)
         })
 
         username.afterTextChanged {
@@ -109,7 +116,6 @@ class LoginActivity : AppCompatActivity() {
     private fun updateUiWithUser(model: LoggedInUserView) {
         val welcome = getString(R.string.welcome)
         val displayName = model.displayName
-        // TODO : initiate successful logged in experience
         Toast.makeText(
             applicationContext,
             "$welcome $displayName",
