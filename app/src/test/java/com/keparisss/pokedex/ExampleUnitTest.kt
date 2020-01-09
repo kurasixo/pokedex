@@ -1,4 +1,4 @@
-package com.example.room
+package com.keparisss.pokedex
 
 import org.junit.Test
 

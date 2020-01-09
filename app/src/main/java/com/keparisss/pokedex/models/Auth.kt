@@ -17,7 +17,8 @@ data class LoggedInUserView(
 
 data class LoggedInUser(
     val userId: String,
-    val displayName: String
+    val displayName: String,
+    val lastLoggedIn: Long
 )
 
 sealed class Result<out T : Any> {

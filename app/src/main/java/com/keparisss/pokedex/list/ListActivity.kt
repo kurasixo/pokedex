@@ -1,5 +1,6 @@
 package com.keparisss.pokedex.list
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.Observer
@@ -11,8 +12,7 @@ import com.keparisss.pokedex.models.ListPokemonViewModel
 
 import com.keparisss.pokedex.R
 import kotlinx.android.synthetic.main.list_activity.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class ListActivity : AppCompatActivity() {
     private var pokemonViewModel: ListPokemonViewModel? = null
@@ -25,7 +25,7 @@ class ListActivity : AppCompatActivity() {
         pokemonList.layoutManager = LinearLayoutManager(this)
         val pokemons = pokemonViewModel!!.getAllPokemons()
 
-        GlobalScope.launch { pokemonViewModel!!.initPokemons() }
+        CoroutineScope(Dispatchers.IO).launch { pokemonViewModel!!.initPokemons() }
         pokemonList.adapter = ListActivityAdapter(pokemons.value!!, this)
 
         pokemons.observe(this, Observer {
@@ -38,7 +38,7 @@ class ListActivity : AppCompatActivity() {
                 super.onScrollStateChanged(recyclerView, newState)
 
                 if (!recyclerView.canScrollVertically(1)) {
-                    GlobalScope.launch {
+                    CoroutineScope(Dispatchers.IO).launch {
                         pokemonViewModel!!.onOverScroll()
                     }
                 }
@@ -50,5 +50,12 @@ class ListActivity : AppCompatActivity() {
         super.onPause()
 
         pokemonViewModel!!.saveToPreferences()
+
+        val preferences = getSharedPreferences("sensitiveData", Context.MODE_PRIVATE)
+        val editor = preferences.edit()
+
+        editor.putLong("lastAppOpened", System.currentTimeMillis())
+
+        editor.apply()
     }
 }

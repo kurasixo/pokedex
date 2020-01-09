@@ -3,12 +3,9 @@ package com.keparisss.pokedex.data
 import android.content.SharedPreferences
 import com.keparisss.pokedex.models.*
 
-class LoginRepository(val dataSource: LoginDataSource) {
+class AuthRepository(val dataSource: AuthDataSource) {
     var user: LoggedInUser? = null
         private set
-
-    val isLoggedIn: Boolean
-        get() = user != null
 
     init {
         user = null
@@ -18,7 +15,7 @@ class LoginRepository(val dataSource: LoginDataSource) {
         val result = dataSource.login(username, password, preferences)
 
         if (result is Result.Success) {
-            setLoggedInUser(result.data)
+            setLoggedInUser(result.data, preferences)
         }
 
         return result
@@ -28,13 +25,13 @@ class LoginRepository(val dataSource: LoginDataSource) {
         val result = dataSource.signup(username, password, preferences)
 
         if (result is Result.Success) {
-            setLoggedInUser(result.data)
+            setLoggedInUser(result.data, preferences)
         }
 
         return result
     }
 
-    private fun setLoggedInUser(loggedInUser: LoggedInUser) {
+    private fun setLoggedInUser(loggedInUser: LoggedInUser, preferences: SharedPreferences) {
         this.user = loggedInUser
     }
 }

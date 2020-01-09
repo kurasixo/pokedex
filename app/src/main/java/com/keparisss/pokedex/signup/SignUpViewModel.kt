@@ -5,12 +5,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import android.util.Patterns
-import com.keparisss.pokedex.data.LoginRepository
+import com.keparisss.pokedex.data.AuthRepository
 
 import com.keparisss.pokedex.R
 import com.keparisss.pokedex.models.*
 
-class SignUpViewModel(private val loginRepository: LoginRepository) : ViewModel() {
+class SignUpViewModel(private val authRepository: AuthRepository) : ViewModel() {
 
     private val _signupForm = MutableLiveData<LoginFormState>()
     val loginFormState: LiveData<LoginFormState> = _signupForm
@@ -19,7 +19,7 @@ class SignUpViewModel(private val loginRepository: LoginRepository) : ViewModel(
     val signupResult: LiveData<LoginResult> = _signupResult
 
     fun signup(username: String, password: String, preferences: SharedPreferences) {
-        val result = loginRepository.signup(username, password, preferences)
+        val result = authRepository.signup(username, password, preferences)
 
         if (result is Result.Success) {
             _signupResult.value =

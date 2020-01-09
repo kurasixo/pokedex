@@ -19,8 +19,20 @@ android {
     }
     buildTypes {
         release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            debuggable true
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            applicationIdSuffix ".debug"
+        }
+
+        staging {
+            initWith debug
+            manifestPlaceholders = [hostName:"internal.keparisss.com"]
+            applicationIdSuffix ".debugStaging"
         }
     }
 }
@@ -51,4 +63,6 @@ dependencies {
 
     kapt 'com.google.dagger:dagger-compiler:2.20'
     kapt 'com.google.dagger:dagger-android-processor:2.20'
+
+    implementation 'androidx.biometric:biometric:1.0.1'
 }
