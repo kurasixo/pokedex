@@ -1,17 +1,19 @@
-package com.keparisss.pokedex.login
+package com.keparisss.pokedex.auth.login
 
 import android.content.SharedPreferences
+
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.MutableLiveData
+
 import android.util.Patterns
 
-import com.keparisss.pokedex.data.AuthRepository
 import com.keparisss.pokedex.models.Result
-
-import com.keparisss.pokedex.models.*
+import com.keparisss.pokedex.data.AuthRepository
 
 import com.keparisss.pokedex.R
+import com.keparisss.pokedex.models.*
+
 import javax.inject.Inject
 
 class LoginViewModel @Inject constructor(private val authRepository: AuthRepository): ViewModel() {

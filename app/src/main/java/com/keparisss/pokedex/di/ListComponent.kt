@@ -1,7 +1,7 @@
 package com.keparisss.pokedex.di
 
-import com.keparisss.pokedex.list.DetailsActivity
 import com.keparisss.pokedex.list.ListActivity
+import com.keparisss.pokedex.list.DetailsActivity
 
 import dagger.Component
 

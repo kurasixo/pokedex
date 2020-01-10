@@ -1,15 +1,22 @@
 package com.keparisss.pokedex.models
 
 import android.app.Application
+
+import android.content.Context
+
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.LiveData
-import com.google.gson.GsonBuilder
 
 import okhttp3.*
-import java.io.IOException
-import android.content.Context
+import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
+import java.io.IOException
+
 import javax.inject.Inject
 
 // Utilities
@@ -22,7 +29,7 @@ data class NamedApiResource(
     val name: String,
     override val category: String,
     override val id: Int
-) : ResourceSummary
+): ResourceSummary
 
 // Pokemon Model
 data class PokemonModel(
@@ -114,7 +121,7 @@ class ListPokemonViewModel @Inject constructor(app: Application): AndroidViewMod
     private val gson = GsonBuilder().create()
 
     private var pokemonsSize = 0
-    private val pokemonApiUrl: String = "https://pokeapi.co/api/v2/pokemon"
+    private val pokemonApiUrl: String = "https://pokeapi.co/api/v2/pokemon/?offset=10&limit=10"
 
     private var next: String? = null
     private var current: String? = null
@@ -146,7 +153,7 @@ class ListPokemonViewModel @Inject constructor(app: Application): AndroidViewMod
         if (preloadedPokemons != null) {
             val pokemons = gson.fromJson<ArrayList<PokemonModel>>(
                 preloadedPokemons,
-                object : TypeToken<ArrayList<PokemonModel>>() {}.type)
+                object: TypeToken<ArrayList<PokemonModel>>() {}.type)
 
             val prevPokemons = getAllPokemons().value!!
 
@@ -164,7 +171,7 @@ class ListPokemonViewModel @Inject constructor(app: Application): AndroidViewMod
             .url(url!!)
             .build()
 
-        client.newCall(request).enqueue(object : Callback {
+        client.newCall(request).enqueue(object: Callback {
             override fun onFailure(call: Call, e: IOException) {
                 e.printStackTrace()
             }
@@ -182,11 +189,13 @@ class ListPokemonViewModel @Inject constructor(app: Application): AndroidViewMod
                     current = next
                     next = resp.next!!
 
-                    resp.results.forEachIndexed {pos, pokemon ->
-                        fetchPokemon(pokemon.url)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        resp.results.forEachIndexed { pos, pokemon ->
+                            fetchPokemon(pokemon.url)
 
-                        if (pos == resp.results.size - 1) {
-                            isLoading = false
+                            if (pos == resp.results.size - 1) {
+                                isLoading = false
+                            }
                         }
                     }
                 }
@@ -199,7 +208,7 @@ class ListPokemonViewModel @Inject constructor(app: Application): AndroidViewMod
             .url(url)
             .build()
 
-        client.newCall(request).enqueue(object : Callback {
+        client.newCall(request).enqueue(object: Callback {
             override fun onFailure(call: Call, e: IOException) {
                 e.printStackTrace()
             }

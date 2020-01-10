@@ -1,8 +1,8 @@
 package com.keparisss.pokedex.di
 
-import com.keparisss.pokedex.login.LoginActivity
-import com.keparisss.pokedex.signup.SignUpActivity
-import com.keparisss.pokedex.login.AuthViewModelFactory
+import com.keparisss.pokedex.auth.login.LoginActivity
+import com.keparisss.pokedex.auth.signup.SignUpActivity
+import com.keparisss.pokedex.auth.common.AuthViewModelFactory
 
 import dagger.Component
 

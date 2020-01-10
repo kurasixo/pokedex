@@ -1,14 +1,17 @@
-package com.keparisss.pokedex.signup
+package com.keparisss.pokedex.auth.signup
 
-import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+
 import android.util.Patterns
+import android.content.SharedPreferences
+
 import com.keparisss.pokedex.data.AuthRepository
 
 import com.keparisss.pokedex.R
 import com.keparisss.pokedex.models.*
+
 import javax.inject.Inject
 
 class SignUpViewModel @Inject constructor(private val authRepository: AuthRepository): ViewModel() {

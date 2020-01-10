@@ -1,13 +1,16 @@
-package com.keparisss.pokedex.signup
+package com.keparisss.pokedex.auth.signup
 
+import android.os.Bundle
 import android.app.Activity
+import androidx.appcompat.app.AppCompatActivity
+
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -17,10 +20,12 @@ import android.widget.EditText
 import android.widget.ProgressBar
 
 import com.keparisss.pokedex.R
-import com.keparisss.pokedex.di.DaggerAuthComponent
 import com.keparisss.pokedex.list.ListActivity
-import com.keparisss.pokedex.login.AuthViewModelFactory
+
+import com.keparisss.pokedex.auth.common.AuthViewModelFactory
+
 import javax.inject.Inject
+import com.keparisss.pokedex.di.DaggerAuthComponent
 
 class SignUpActivity: AppCompatActivity() {
     private lateinit var signupViewModel: SignUpViewModel
@@ -112,7 +117,7 @@ class SignUpActivity: AppCompatActivity() {
 }
 
 fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
-    this.addTextChangedListener(object : TextWatcher {
+    this.addTextChangedListener(object: TextWatcher {
         override fun afterTextChanged(editable: Editable?) {
             afterTextChanged.invoke(editable.toString())
         }

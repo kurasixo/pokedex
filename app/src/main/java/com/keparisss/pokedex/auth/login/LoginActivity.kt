@@ -1,15 +1,13 @@
-package com.keparisss.pokedex.login
+package com.keparisss.pokedex.auth.login
 
 import android.app.Activity
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import androidx.biometric.BiometricPrompt
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -22,8 +20,11 @@ import androidx.core.content.ContextCompat
 import com.keparisss.pokedex.R
 import com.keparisss.pokedex.di.DaggerAuthComponent
 import com.keparisss.pokedex.list.ListActivity
-import com.keparisss.pokedex.signup.SignUpActivity
-import com.keparisss.pokedex.signup.afterTextChanged
+
+import com.keparisss.pokedex.auth.signup.SignUpActivity
+import com.keparisss.pokedex.auth.signup.afterTextChanged
+import com.keparisss.pokedex.auth.common.AuthViewModelFactory
+
 import kotlinx.coroutines.*
 import java.util.concurrent.Executor
 
@@ -31,7 +32,7 @@ import javax.inject.Inject
 
 class LoginActivity: AppCompatActivity() {
     private val fiveMins: Long = 5 * 60 * 1000
-    private var debJob: Job? = null
+    private var debounceJob: Job? = null
 
     private lateinit var loginViewModel: LoginViewModel
 
@@ -64,7 +65,7 @@ class LoginActivity: AppCompatActivity() {
             getSharedPreferences("sensitiveData", Context.MODE_PRIVATE)
 
         val lastLoggedInTime = preferences.getLong("lastAppOpened", 0.toLong())
-        if (lastLoggedInTime != 0.toLong()) {
+        if (lastLoggedInTime != 0.toLong())  {
             val currentTime = System.currentTimeMillis()
 
             if (currentTime - lastLoggedInTime < fiveMins) {
@@ -112,8 +113,8 @@ class LoginActivity: AppCompatActivity() {
                     password.text.toString()
                 )
 
-                debJob?.cancel()
-                debJob = CoroutineScope(Dispatchers.IO).launch {
+                debounceJob?.cancel()
+                debounceJob = CoroutineScope(Dispatchers.IO).launch {
                     delay(150L)
 
                     loginViewModel.login(
@@ -162,17 +163,15 @@ class LoginActivity: AppCompatActivity() {
     private fun displayBiometricPrompt() {
         executor = ContextCompat.getMainExecutor(this)
         biometricPrompt = BiometricPrompt(this, executor,
-            object : BiometricPrompt.AuthenticationCallback() {
-                override fun onAuthenticationError(errorCode: Int,
-                                                   errString: CharSequence) {
+            object: BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                     super.onAuthenticationError(errorCode, errString)
                     Toast.makeText(applicationContext,
                         "Authentication error: $errString", Toast.LENGTH_SHORT)
                         .show()
                 }
 
-                override fun onAuthenticationSucceeded(
-                    result: BiometricPrompt.AuthenticationResult) {
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                     super.onAuthenticationSucceeded(result)
 
                     openListActivity()
@@ -187,7 +186,7 @@ class LoginActivity: AppCompatActivity() {
             })
 
         promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Biometric login for my app")
+            .setTitle("Biometric login for pokedex")
             .setSubtitle("Log in using your biometric credential")
             .setNegativeButtonText("Use account password")
             .build()

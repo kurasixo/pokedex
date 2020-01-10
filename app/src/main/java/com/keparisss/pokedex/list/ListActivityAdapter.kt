@@ -1,26 +1,28 @@
 package com.keparisss.pokedex.list
 
 
-import android.content.Context
-import android.content.Intent
 import androidx.recyclerview.widget.RecyclerView
-import android.view.LayoutInflater
+
+import android.content.Intent
+import android.content.Context
+
 import android.view.View
+import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.ImageView
 import android.widget.RatingBar
+
 import com.bumptech.glide.Glide
-import com.keparisss.pokedex.models.PokemonModel
+
 import com.keparisss.pokedex.R
-import com.google.gson.GsonBuilder
+import com.keparisss.pokedex.models.PokemonModel
+
 import kotlinx.android.synthetic.main.list_activity_item.view.*
 
 
 class ListActivityAdapter(private var items: ArrayList<PokemonModel>, private val context: Context):
     RecyclerView.Adapter<ListActivityAdapter.ViewHolder>() {
-
-    private val gson = GsonBuilder().create()
 
     class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val pokemonName: TextView = view.pokemonName
@@ -38,7 +40,6 @@ class ListActivityAdapter(private var items: ArrayList<PokemonModel>, private va
                 .from(context)
                 .inflate(R.layout.list_activity_item, parent, false)
         )
-
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

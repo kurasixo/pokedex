@@ -1,21 +1,25 @@
 package com.keparisss.pokedex.list
 
-import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+
+import android.content.Context
+
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.keparisss.pokedex.models.ListPokemonViewModel
+
+import kotlinx.coroutines.*
 
 import com.keparisss.pokedex.R
-import com.keparisss.pokedex.di.DaggerListComponent
-import com.keparisss.pokedex.di.ListModule
+import com.keparisss.pokedex.models.ListPokemonViewModel
+
 import kotlinx.android.synthetic.main.list_activity.*
-import kotlinx.coroutines.*
+
 import javax.inject.Inject
+import com.keparisss.pokedex.di.ListModule
+import com.keparisss.pokedex.di.DaggerListComponent
 
 class ListActivity: AppCompatActivity() {
     @Inject
@@ -42,14 +46,12 @@ class ListActivity: AppCompatActivity() {
             pokemonCount.text = resources.getQuantityString(R.plurals.pokemons, it.size, it.size)
         })
 
-        pokemonList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        pokemonList.addOnScrollListener(object: RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
 
                 if (!recyclerView.canScrollVertically(1)) {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        pokemonViewModel.onOverScroll()
-                    }
+                    CoroutineScope(Dispatchers.IO).launch { pokemonViewModel.onOverScroll() }
                 }
             }
         })

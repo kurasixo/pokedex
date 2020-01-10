@@ -14,20 +14,28 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".signup.SignUpActivity"
-            android:label="@string/title_activity_sign_up">
-        </activity>
+            android:name=".auth.signup.SignUpActivity" />
 
         <activity
-            android:name=".login.LoginActivity"
-            android:label="@string/title_activity_login">
+            android:name=".auth.login.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".list.ListActivity" />
+        <activity android:name=".list.ListActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="https"
+                    android:host="pokeapi.co" />
+            </intent-filter>
+        </activity>
         <activity android:name=".list.DetailsActivity" />
     </application>
 

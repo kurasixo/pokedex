@@ -1,9 +1,10 @@
 package com.keparisss.pokedex.data
 
-import android.content.SharedPreferences
-import com.keparisss.pokedex.models.*
 import java.io.IOException
-import javax.inject.Inject
+
+import android.content.SharedPreferences
+
+import com.keparisss.pokedex.models.*
 
 class AuthDataSource {
     fun login(

@@ -1,9 +1,12 @@
-package com.keparisss.pokedex.login
+package com.keparisss.pokedex.auth.common
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+
 import com.keparisss.pokedex.data.AuthRepository
-import com.keparisss.pokedex.signup.SignUpViewModel
+
+import com.keparisss.pokedex.auth.login.LoginViewModel
+import com.keparisss.pokedex.auth.signup.SignUpViewModel
 
 import javax.inject.Inject
 import com.keparisss.pokedex.di.DaggerAuthViewModelComponent
@@ -12,7 +15,7 @@ class AuthViewModelFactory @Inject constructor(): ViewModelProvider.Factory {
     @Inject
     lateinit var authRepository: AuthRepository
 
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+    override fun <T: ViewModel> create(modelClass: Class<T>): T {
         DaggerAuthViewModelComponent.create().inject(this)
 
         if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {

@@ -1,15 +1,18 @@
 package com.keparisss.pokedex.list
 
 import android.app.Application
+
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+
 import com.keparisss.pokedex.models.ListPokemonViewModel
+
 import javax.inject.Singleton
 
 @Singleton
 class PokemonViewModelFactory(val app: Application): ViewModelProvider.AndroidViewModelFactory(app) {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+    override fun <T: ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ListPokemonViewModel::class.java)) {
             val key = "ListPokemonViewModel"
             val listPokemonViewModel = ListPokemonViewModel(app)

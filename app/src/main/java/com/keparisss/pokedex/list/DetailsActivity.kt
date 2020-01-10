@@ -1,19 +1,20 @@
 package com.keparisss.pokedex.list
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-
-import javax.inject.Inject
+import androidx.appcompat.app.AppCompatActivity
 
 import com.bumptech.glide.Glide
-import com.keparisss.pokedex.models.PokemonModel
+
 import com.keparisss.pokedex.R
-import com.keparisss.pokedex.di.DaggerListComponent
-import com.keparisss.pokedex.di.ListModule
+import com.keparisss.pokedex.models.PokemonModel
 import com.keparisss.pokedex.models.ListPokemonViewModel
+
 import kotlinx.android.synthetic.main.details_activity.*
 import kotlinx.android.synthetic.main.details_activity.pokemonName
 
+import javax.inject.Inject
+import com.keparisss.pokedex.di.ListModule
+import com.keparisss.pokedex.di.DaggerListComponent
 
 class DetailsActivity: AppCompatActivity() {
     private var position: Int? = null
@@ -52,10 +53,9 @@ class DetailsActivity: AppCompatActivity() {
             pokemon = pokemonViewModel.getAllPokemons().value!![position!!]
 
             setName(pokemon.name)
+            setRating(pokemon.rating)
             setDescription(pokemon.getAbilities())
             setImage(pokemon.sprites.front_default)
-            println(pokemon.rating)
-            setRating(pokemon.rating)
         }
     }
 

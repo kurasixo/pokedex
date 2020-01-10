@@ -2,7 +2,7 @@ package com.keparisss.pokedex.di
 
 import com.keparisss.pokedex.data.AuthRepository
 import com.keparisss.pokedex.data.AuthDataSource
-import com.keparisss.pokedex.login.AuthViewModelFactory
+import com.keparisss.pokedex.auth.common.AuthViewModelFactory
 
 import dagger.Module
 import dagger.Provides
