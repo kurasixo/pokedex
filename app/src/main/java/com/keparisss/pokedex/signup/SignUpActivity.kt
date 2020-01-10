@@ -17,13 +17,20 @@ import android.widget.EditText
 import android.widget.ProgressBar
 
 import com.keparisss.pokedex.R
+import com.keparisss.pokedex.di.DaggerAuthComponent
 import com.keparisss.pokedex.list.ListActivity
 import com.keparisss.pokedex.login.AuthViewModelFactory
+import javax.inject.Inject
 
-class SignUpActivity : AppCompatActivity() {
+class SignUpActivity: AppCompatActivity() {
     private lateinit var signupViewModel: SignUpViewModel
 
+    @Inject
+    lateinit var factory: AuthViewModelFactory
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        DaggerAuthComponent.create().inject(this)
+
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.signup_activity)
@@ -36,7 +43,7 @@ class SignUpActivity : AppCompatActivity() {
         val preferences: SharedPreferences =
             getSharedPreferences("sensitiveData", Context.MODE_PRIVATE)
 
-        signupViewModel = ViewModelProviders.of(this, AuthViewModelFactory())
+        signupViewModel = ViewModelProviders.of(this, factory)
             .get(SignUpViewModel::class.java)
 
         signupViewModel.loginFormState.observe(this@SignUpActivity, Observer {

@@ -2,8 +2,9 @@ package com.keparisss.pokedex.data
 
 import android.content.SharedPreferences
 import com.keparisss.pokedex.models.*
+import javax.inject.Inject
 
-class AuthRepository(val dataSource: AuthDataSource) {
+class AuthRepository @Inject constructor(private val dataSource: AuthDataSource) {
     var user: LoggedInUser? = null
         private set
 

@@ -20,13 +20,16 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 
 import com.keparisss.pokedex.R
+import com.keparisss.pokedex.di.DaggerAuthComponent
 import com.keparisss.pokedex.list.ListActivity
 import com.keparisss.pokedex.signup.SignUpActivity
 import com.keparisss.pokedex.signup.afterTextChanged
 import kotlinx.coroutines.*
 import java.util.concurrent.Executor
 
-class LoginActivity : AppCompatActivity() {
+import javax.inject.Inject
+
+class LoginActivity: AppCompatActivity() {
     private val fiveMins: Long = 5 * 60 * 1000
     private var debJob: Job? = null
 
@@ -36,7 +39,12 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var biometricPrompt: BiometricPrompt
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
 
+    @Inject
+    lateinit var factory: AuthViewModelFactory
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        DaggerAuthComponent.create().inject(this)
+
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.login_activity)
@@ -49,7 +57,7 @@ class LoginActivity : AppCompatActivity() {
 
         displayBiometricPrompt()
 
-        loginViewModel = ViewModelProviders.of(this, AuthViewModelFactory())
+        loginViewModel = ViewModelProviders.of(this, factory)
             .get(LoginViewModel::class.java)
 
         val preferences: SharedPreferences =

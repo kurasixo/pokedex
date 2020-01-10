@@ -11,21 +11,32 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.keparisss.pokedex.models.ListPokemonViewModel
 
 import com.keparisss.pokedex.R
+import com.keparisss.pokedex.di.DaggerListComponent
+import com.keparisss.pokedex.di.ListModule
 import kotlinx.android.synthetic.main.list_activity.*
 import kotlinx.coroutines.*
+import javax.inject.Inject
 
-class ListActivity : AppCompatActivity() {
-    private var pokemonViewModel: ListPokemonViewModel? = null
+class ListActivity: AppCompatActivity() {
+
+    @Inject
+    lateinit var pokemonViewModel: ListPokemonViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        DaggerListComponent
+            .builder()
+            .listModule(ListModule(this))
+            .build()
+            .inject(this)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.list_activity)
 
         pokemonViewModel = ViewModelProviders.of(this)[ListPokemonViewModel::class.java]
         pokemonList.layoutManager = LinearLayoutManager(this)
-        val pokemons = pokemonViewModel!!.getAllPokemons()
+        val pokemons = pokemonViewModel.getAllPokemons()
 
-        CoroutineScope(Dispatchers.IO).launch { pokemonViewModel!!.initPokemons() }
+        CoroutineScope(Dispatchers.IO).launch { pokemonViewModel.initPokemons() }
         pokemonList.adapter = ListActivityAdapter(pokemons.value!!, this)
 
         pokemons.observe(this, Observer {
@@ -39,7 +50,7 @@ class ListActivity : AppCompatActivity() {
 
                 if (!recyclerView.canScrollVertically(1)) {
                     CoroutineScope(Dispatchers.IO).launch {
-                        pokemonViewModel!!.onOverScroll()
+                        pokemonViewModel.onOverScroll()
                     }
                 }
             }
@@ -49,7 +60,7 @@ class ListActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
 
-        pokemonViewModel!!.saveToPreferences()
+        pokemonViewModel.saveToPreferences()
 
         val preferences = getSharedPreferences("sensitiveData", Context.MODE_PRIVATE)
         val editor = preferences.edit()

@@ -12,9 +12,9 @@ import com.keparisss.pokedex.models.Result
 import com.keparisss.pokedex.models.*
 
 import com.keparisss.pokedex.R
+import javax.inject.Inject
 
-class LoginViewModel(private val authRepository: AuthRepository) : ViewModel() {
-
+class LoginViewModel @Inject constructor(private val authRepository: AuthRepository): ViewModel() {
     private val _loginForm = MutableLiveData<LoginFormState>()
     val loginFormState: LiveData<LoginFormState> = _loginForm
 

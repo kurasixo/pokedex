@@ -10,6 +10,7 @@ import okhttp3.*
 import java.io.IOException
 import android.content.Context
 import com.google.gson.reflect.TypeToken
+import javax.inject.Inject
 
 // Utilities
 interface ResourceSummary {
@@ -101,7 +102,7 @@ data class PokeAPIResponse(
     val results: ArrayList<PokemonViewModel>
 )
 
-class ListPokemonViewModel(app: Application): AndroidViewModel(app) {
+class ListPokemonViewModel @Inject constructor(app: Application): AndroidViewModel(app) {
     class PokemonModelLiveData {
         val mutableLiveData: MutableLiveData<ArrayList<PokemonModel>> =
             MutableLiveData(ArrayList())
