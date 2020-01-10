@@ -11,7 +11,6 @@ import dagger.Provides
 
 @Module
 class ListModule(private val activity: AppCompatActivity) {
-    // TODO: deal with livedata between activities
     private val factory = PokemonViewModelFactory(activity.application)
 
     @Provides
