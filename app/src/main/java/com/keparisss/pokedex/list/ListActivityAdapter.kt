@@ -11,7 +11,6 @@ import android.widget.TextView
 import android.widget.ImageView
 import android.widget.RatingBar
 import com.bumptech.glide.Glide
-import com.keparisss.pokedex.details.DetailsActivity
 import com.keparisss.pokedex.models.PokemonModel
 import com.keparisss.pokedex.R
 import com.google.gson.GsonBuilder
@@ -55,7 +54,7 @@ class ListActivityAdapter(private var items: ArrayList<PokemonModel>, private va
 
         holder.pokemonName.setOnClickListener {
             val intent = Intent(context, DetailsActivity::class.java)
-            intent.putExtra("pokemon", gson.toJson(items[position]))
+            intent.putExtra("position", position)
 
             context.startActivity(intent)
         }

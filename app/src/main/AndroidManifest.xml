@@ -28,7 +28,7 @@
         </activity>
 
         <activity android:name=".list.ListActivity" />
-        <activity android:name=".details.DetailsActivity" />
+        <activity android:name=".list.DetailsActivity" />
     </application>
 
 </manifest>

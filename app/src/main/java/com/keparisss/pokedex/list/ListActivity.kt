@@ -18,7 +18,6 @@ import kotlinx.coroutines.*
 import javax.inject.Inject
 
 class ListActivity: AppCompatActivity() {
-
     @Inject
     lateinit var pokemonViewModel: ListPokemonViewModel
 
@@ -32,7 +31,6 @@ class ListActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.list_activity)
 
-        pokemonViewModel = ViewModelProviders.of(this)[ListPokemonViewModel::class.java]
         pokemonList.layoutManager = LinearLayoutManager(this)
         val pokemons = pokemonViewModel.getAllPokemons()
 
